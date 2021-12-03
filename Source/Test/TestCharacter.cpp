@@ -8,6 +8,7 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/Controller.h"
 #include "GameFramework/SpringArmComponent.h"
+#include "Bullet.h"
 
 //////////////////////////////////////////////////////////////////////////
 // ATestCharacter
@@ -57,6 +58,8 @@ void ATestCharacter::SetupPlayerInputComponent(class UInputComponent* PlayerInpu
 	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &ACharacter::Jump);
 	PlayerInputComponent->BindAction("Jump", IE_Released, this, &ACharacter::StopJumping);
 
+	PlayerInputComponent->BindAction("Shoot", IE_Pressed, this, &ATestCharacter::Shoot);
+
 	PlayerInputComponent->BindAxis("MoveForward", this, &ATestCharacter::MoveForward);
 	PlayerInputComponent->BindAxis("MoveRight", this, &ATestCharacter::MoveRight);
 
@@ -76,6 +79,17 @@ void ATestCharacter::SetupPlayerInputComponent(class UInputComponent* PlayerInpu
 	PlayerInputComponent->BindAction("ResetVR", IE_Pressed, this, &ATestCharacter::OnResetVR);
 }
 
+
+void ATestCharacter::Shoot()
+{
+	FTransform SpawnTransform = GetActorTransform();
+
+	SpawnTransform.SetLocation(FollowCamera->GetComponentRotation().Vector() * 200.f + GetActorLocation());
+
+	FActorSpawnParameters SpawnParams{};
+
+	GetWorld()->SpawnActor<ABullet>(BulletBP, SpawnTransform, SpawnParams);
+}
 
 void ATestCharacter::OnResetVR()
 {
